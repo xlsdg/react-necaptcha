@@ -1,0 +1,62 @@
+{
+  "author": "xLsDg <xlsdg@qq.com> (https://blog.xlsdg.org/)",
+  "browser": "dist/necaptcha.js",
+  "bugs": {
+    "url": "https://github.com/xlsdg/react-necaptcha/issues"
+  },
+  "description": "A NECaptcha component for React",
+  "devDependencies": {
+    "bili": "^3.4.2",
+    "eslint": "^5.9.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-alloy": "^1.4.2",
+    "eslint-config-prettier": "^3.3.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-jsx-a11y": "^6.1.2",
+    "eslint-plugin-react": "^7.11.1",
+    "prettier": "^1.15.3",
+    "rollup-plugin-prettier": "^0.5.0",
+    "rollup-plugin-vue": "^4.3.2",
+    "stylelint": "^9.9.0",
+    "stylelint-config-prettier": "^4.0.0",
+    "stylelint-config-standard": "^18.2.0",
+    "stylelint-order": "^2.0.0",
+    "vue-template-compiler": "^2.5.17"
+  },
+  "engines": {
+    "node": ">=8",
+    "npm": ">=5"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "homepage": "https://github.com/xlsdg/react-necaptcha",
+  "jsdelivr": "dist/necaptcha.min.js",
+  "keywords": [
+    "react",
+    "necaptcha",
+    "react-necaptcha",
+    "library"
+  ],
+  "license": "MIT",
+  "main": "dist/necaptcha.cjs.js",
+  "module": "dist/necaptcha.es.js",
+  "name": "react-necaptcha",
+  "peerDependencies": {
+    "react": "latest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xlsdg/react-necaptcha.git"
+  },
+  "scripts": {
+    "build": "bili",
+    "release:major": "npm version major && npm publish",
+    "release:minor": "npm version minor && npm publish",
+    "release:patch": "npm version patch && npm publish"
+  },
+  "source": "src/necaptcha.jsx",
+  "unpkg": "dist/necaptcha.min.js",
+  "version": "2.2.0"
+}

@@ -33,7 +33,7 @@ export default () => {
   protocol:     React.PropTypes.string,
   width:        React.PropTypes.oneOfType([React.PropTypes.number, React.PropTypes.string]),
   lang:         React.PropTypes.string,
-  appendTo:     React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.element]),,
+  appendTo:     React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.node]),
   onLoad:       React.PropTypes.func,
   onError:      React.PropTypes.func,
   onReady:      React.PropTypes.func,

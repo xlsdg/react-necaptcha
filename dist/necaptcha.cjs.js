@@ -133,9 +133,8 @@ var NECaptcha =
           };
         }
 
-        ds.src = ''
-          .concat(document.location.protocol, '//cstaticdun.126.net/load.min.js?_t=')
-          .concat(new Date().getTime());
+        var protocol = window.location.protocol === 'http:' ? 'http:' : 'https:';
+        ds.src = ''.concat(protocol, '//cstaticdun.126.net/load.min.js?_t=').concat(new Date().getTime());
         var s = document.getElementsByTagName('script')[0];
         s.parentNode.insertBefore(ds, s);
         that.setState({

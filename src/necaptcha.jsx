@@ -92,7 +92,8 @@ export default class NECaptcha extends React.Component {
       };
     }
 
-    ds.src = `${document.location.protocol}//cstaticdun.126.net/load.min.js?_t=${new Date().getTime()}`;
+    const protocol = window.location.protocol === 'http:' ? 'http:' : 'https:';
+    ds.src = `${protocol}//cstaticdun.126.net/load.min.js?_t=${new Date().getTime()}`;
     const s = document.getElementsByTagName('script')[0];
     s.parentNode.insertBefore(ds, s);
 

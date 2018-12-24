@@ -28,17 +28,18 @@ export default () => {
 ## Properties
 
 ``` javascript
-  captchaId:    React.PropTypes.string.isRequired,
-  mode:         React.PropTypes.string,
-  protocol:     React.PropTypes.string,
-  width:        React.PropTypes.oneOfType([React.PropTypes.number, React.PropTypes.string]),
-  lang:         React.PropTypes.string,
-  appendTo:     React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.node]),
-  onLoad:       React.PropTypes.func,
-  onError:      React.PropTypes.func,
-  onReady:      React.PropTypes.func,
-  onVerify:     React.PropTypes.func,
-  onClose:      React.PropTypes.func,
+  className:    PropTypes.string,
+  captchaId:    PropTypes.string.isRequired,
+  mode:         PropTypes.string,
+  protocol:     PropTypes.string,
+  width:        PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  lang:         PropTypes.string,
+  appendTo:     PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  onLoad:       PropTypes.func,
+  onError:      PropTypes.func,
+  onReady:      PropTypes.func,
+  onVerify:     PropTypes.func,
+  onClose:      PropTypes.func,
 ```
 
 [Read More](http://support.dun.163.com/documents/15588062143475712?docId=150442915877015552)

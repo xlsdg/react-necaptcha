@@ -2,6 +2,7 @@ import React from 'react';
 
 export default class NECaptcha extends React.Component {
   static defaultProps = {
+    className: 'i-necaptcha',
     // captchaId: '',
     // element: '',
     // mode: '',
@@ -9,11 +10,11 @@ export default class NECaptcha extends React.Component {
     width: 'auto',
     lang: 'zh-CN',
     // appendTo: '',
-    onLoad: instance => {},
-    onError: err => {},
     onReady: instance => {},
     onVerify: () => {},
     onClose: () => {},
+    onLoad: instance => {},
+    onError: err => {},
   };
 
   constructor(props) {
@@ -105,7 +106,7 @@ export default class NECaptcha extends React.Component {
   ready = () => {
     const that = this;
     // console.log('_ready');
-    const { captchaId, width, lang, onLoad, onError } = that.props;
+    const { captchaId, width, lang, onReady, onVerify, onClose, onLoad, onError } = that.props;
     const { ins } = that.state;
 
     if (!window.initNECaptcha) {
@@ -113,7 +114,6 @@ export default class NECaptcha extends React.Component {
     }
 
     if (ins) {
-      that.load(ins);
       return;
     }
 
@@ -126,14 +126,17 @@ export default class NECaptcha extends React.Component {
       element: that.dom,
       width,
       lang,
+      onReady,
+      onVerify,
+      onClose,
     };
-
-    if (that.props.protocol) {
-      config.protocol = that.props.protocol;
-    }
 
     if (that.props.mode) {
       config.mode = that.props.mode;
+    }
+
+    if (that.props.protocol) {
+      config.protocol = that.props.protocol;
     }
 
     if (that.props.appendTo) {
@@ -143,8 +146,6 @@ export default class NECaptcha extends React.Component {
     window.initNECaptcha(
       config,
       instance => {
-        that.load(instance);
-
         that.setState({
           ins: instance,
         });
@@ -153,16 +154,6 @@ export default class NECaptcha extends React.Component {
       },
       onError
     );
-  };
-
-  load = ins => {
-    const that = this;
-    // console.log('_load');
-    const { onReady, onVerify, onClose } = that.props;
-
-    ins.onReady(onReady);
-    ins.onVerify(onVerify);
-    ins.onClose(onClose);
   };
 
   destroy = () => {
@@ -177,12 +168,12 @@ export default class NECaptcha extends React.Component {
   render() {
     const that = this;
     // console.log('render');
-    const { captchaId } = that.props;
+    const { className, captchaId } = that.props;
 
     return (
       <div
         key={captchaId}
-        className="i-necaptcha"
+        className={className}
         ref={e => {
           that.dom = e;
         }}

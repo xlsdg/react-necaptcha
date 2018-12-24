@@ -143,6 +143,9 @@ var NECaptcha =
           captchaId = _that$props.captchaId,
           width = _that$props.width,
           lang = _that$props.lang,
+          onReady = _that$props.onReady,
+          onVerify = _that$props.onVerify,
+          onClose = _that$props.onClose,
           onLoad = _that$props.onLoad,
           onError = _that$props.onError;
         var ins = that.state.ins;
@@ -152,7 +155,6 @@ var NECaptcha =
         }
 
         if (ins) {
-          that.load(ins);
           return;
         }
 
@@ -165,14 +167,17 @@ var NECaptcha =
           element: that.dom,
           width: width,
           lang: lang,
+          onReady: onReady,
+          onVerify: onVerify,
+          onClose: onClose,
         };
-
-        if (that.props.protocol) {
-          config.protocol = that.props.protocol;
-        }
 
         if (that.props.mode) {
           config.mode = that.props.mode;
+        }
+
+        if (that.props.protocol) {
+          config.protocol = that.props.protocol;
         }
 
         if (that.props.appendTo) {
@@ -182,7 +187,6 @@ var NECaptcha =
         window.initNECaptcha(
           config,
           function(instance) {
-            that.load(instance);
             that.setState({
               ins: instance,
             });
@@ -190,18 +194,6 @@ var NECaptcha =
           },
           onError
         );
-      });
-
-      _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), 'load', function(ins) {
-        var that = _assertThisInitialized(_assertThisInitialized(_this)); // console.log('_load');
-
-        var _that$props2 = that.props,
-          onReady = _that$props2.onReady,
-          onVerify = _that$props2.onVerify,
-          onClose = _that$props2.onClose;
-        ins.onReady(onReady);
-        ins.onVerify(onVerify);
-        ins.onClose(onClose);
       });
 
       _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), 'destroy', function() {
@@ -268,10 +260,12 @@ var NECaptcha =
         value: function render() {
           var that = this; // console.log('render');
 
-          var captchaId = that.props.captchaId;
+          var _that$props2 = that.props,
+            className = _that$props2.className,
+            captchaId = _that$props2.captchaId;
           return React.createElement('div', {
             key: captchaId,
-            className: 'i-necaptcha',
+            className: className,
             ref: function ref(e) {
               that.dom = e;
             },
@@ -284,6 +278,7 @@ var NECaptcha =
   })(React.Component);
 
 _defineProperty(NECaptcha, 'defaultProps', {
+  className: 'i-necaptcha',
   // captchaId: '',
   // element: '',
   // mode: '',
@@ -291,11 +286,11 @@ _defineProperty(NECaptcha, 'defaultProps', {
   width: 'auto',
   lang: 'zh-CN',
   // appendTo: '',
-  onLoad: function onLoad(instance) {},
-  onError: function onError(err) {},
   onReady: function onReady(instance) {},
   onVerify: function onVerify() {},
   onClose: function onClose() {},
+  onLoad: function onLoad(instance) {},
+  onError: function onError(err) {},
 });
 
 export default NECaptcha;

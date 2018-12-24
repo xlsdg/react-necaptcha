@@ -58,5 +58,5 @@
   },
   "source": "src/necaptcha.jsx",
   "unpkg": "dist/necaptcha.min.js",
-  "version": "1.0.4"
+  "version": "1.0.5"
 }

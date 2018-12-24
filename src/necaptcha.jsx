@@ -68,15 +68,21 @@ export default class NECaptcha extends React.Component {
   init = () => {
     const that = this;
     // console.log('_init');
+    const id = 'react-necaptcha';
 
     if (window.initNECaptcha) {
       that.ready();
       return;
     }
 
+    if (document.getElementById(id)) {
+      return;
+    }
+
     const ds = document.createElement('script');
+    ds.id = id;
     ds.type = 'text/javascript';
-    ds.async = true;
+    // ds.async = true;
     ds.charset = 'utf-8';
 
     if (ds.readyState) {

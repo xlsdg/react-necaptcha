@@ -109,14 +109,21 @@ var NECaptcha =
       _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), 'init', function() {
         var that = _assertThisInitialized(_assertThisInitialized(_this)); // console.log('_init');
 
+        var id = 'react-necaptcha';
+
         if (window.initNECaptcha) {
           that.ready();
           return;
         }
 
+        if (document.getElementById(id)) {
+          return;
+        }
+
         var ds = document.createElement('script');
-        ds.type = 'text/javascript';
-        ds.async = true;
+        ds.id = id;
+        ds.type = 'text/javascript'; // ds.async = true;
+
         ds.charset = 'utf-8';
 
         if (ds.readyState) {

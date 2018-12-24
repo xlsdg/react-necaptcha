@@ -76,7 +76,7 @@ export default class NECaptcha extends React.Component {
     }
 
     if (document.getElementById(id)) {
-      window.setTimeout(that.ready.bind(that));
+      window.setTimeout(that.ready.bind(that), 500);
       return;
     }
 

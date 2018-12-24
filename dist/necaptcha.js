@@ -236,14 +236,12 @@
           //   const that = this;
           //   console.log('componentWillReceiveProps', that.props, nextProps);
           // }
-        },
-        {
-          key: 'shouldComponentUpdate',
-          value: function shouldComponentUpdate(nextProps, nextState) {
-            var that = this; // console.log('shouldComponentUpdate', that.props, nextProps, that.state, nextState);
-
-            return nextProps.captchaId !== that.props.captchaId;
-          }, // componentWillUpdate(nextProps, nextState) {
+          // shouldComponentUpdate(nextProps, nextState) {
+          //   const that = this;
+          //   // console.log('shouldComponentUpdate', that.props, nextProps, that.state, nextState);
+          //   return nextProps.captchaId !== that.props.captchaId;
+          // }
+          // componentWillUpdate(nextProps, nextState) {
           //   const that = this;
           //   console.log('componentWillUpdate', that.props, nextProps, that.state, nextState);
           // }
@@ -269,11 +267,8 @@
           value: function render() {
             var that = this; // console.log('render');
 
-            var _that$props2 = that.props,
-              className = _that$props2.className,
-              captchaId = _that$props2.captchaId;
+            var className = that.props.className;
             return React.createElement('div', {
-              key: captchaId,
               className: className,
               ref: function ref(e) {
                 that.dom = e;

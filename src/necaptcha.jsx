@@ -42,11 +42,11 @@ export default class NECaptcha extends React.Component {
   //   console.log('componentWillReceiveProps', that.props, nextProps);
   // }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    const that = this;
-    // console.log('shouldComponentUpdate', that.props, nextProps, that.state, nextState);
-    return nextProps.captchaId !== that.props.captchaId;
-  }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   const that = this;
+  //   // console.log('shouldComponentUpdate', that.props, nextProps, that.state, nextState);
+  //   return nextProps.captchaId !== that.props.captchaId;
+  // }
 
   // componentWillUpdate(nextProps, nextState) {
   //   const that = this;
@@ -168,11 +168,10 @@ export default class NECaptcha extends React.Component {
   render() {
     const that = this;
     // console.log('render');
-    const { className, captchaId } = that.props;
+    const { className } = that.props;
 
     return (
       <div
-        key={captchaId}
         className={className}
         ref={e => {
           that.dom = e;

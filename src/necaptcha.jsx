@@ -23,6 +23,8 @@ export default class NECaptcha extends React.Component {
     this.state = {
       ins: null,
       script: null,
+      timer: null,
+      count: 0,
     };
   }
 
@@ -76,14 +78,14 @@ export default class NECaptcha extends React.Component {
     }
 
     if (document.getElementById(id)) {
-      window.setTimeout(that.ready.bind(that), 500);
+      that.wait();
       return;
     }
 
     const ds = document.createElement('script');
     ds.id = id;
     ds.type = 'text/javascript';
-    // ds.async = true;
+    ds.async = true;
     ds.charset = 'utf-8';
 
     if (ds.readyState) {
@@ -107,6 +109,50 @@ export default class NECaptcha extends React.Component {
 
     that.setState({
       script: ds,
+    });
+  };
+
+  wait = () => {
+    const that = this;
+    const { timer, count } = that.state;
+
+    if (timer || count > 0) {
+      return;
+    }
+
+    const newTimer = window.setInterval(() => {
+      if (window.initNECaptcha) {
+        window.clearInterval(newTimer);
+
+        that.setState({
+          timer: null,
+          count: 0,
+        });
+
+        window.setTimeout(that.ready.bind(that));
+        return;
+      }
+
+      let c = that.state.count;
+      c -= 1;
+
+      if (c < 1) {
+        window.clearInterval(newTimer);
+
+        that.setState({
+          timer: null,
+          count: 0,
+        });
+      } else {
+        that.setState({
+          count: c,
+        });
+      }
+    }, 100);
+
+    that.setState({
+      timer: newTimer,
+      count: 10,
     });
   };
 
@@ -165,11 +211,17 @@ export default class NECaptcha extends React.Component {
 
   destroy = () => {
     const that = this;
+    const { timer } = that.state;
+
+    if (timer) {
+      window.clearInterval(timer);
+    }
+
     // that.state.script.parentNode.removeChild(that.state.script);
-    that.setState({
-      ins: null,
-      script: null,
-    });
+    // that.setState({
+    //   ins: null,
+    //   script: null,
+    // });
   };
 
   render() {

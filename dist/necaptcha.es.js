@@ -111,14 +111,14 @@ var NECaptcha =
         }
 
         if (document.getElementById(id)) {
-          window.setTimeout(that.ready.bind(that), 500);
+          that.wait();
           return;
         }
 
         var ds = document.createElement('script');
         ds.id = id;
-        ds.type = 'text/javascript'; // ds.async = true;
-
+        ds.type = 'text/javascript';
+        ds.async = true;
         ds.charset = 'utf-8';
 
         if (ds.readyState) {
@@ -141,6 +141,49 @@ var NECaptcha =
         s.parentNode.insertBefore(ds, s);
         that.setState({
           script: ds,
+        });
+      });
+
+      _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), 'wait', function() {
+        var that = _assertThisInitialized(_assertThisInitialized(_this));
+
+        var _that$state = that.state,
+          timer = _that$state.timer,
+          count = _that$state.count;
+
+        if (timer || count > 0) {
+          return;
+        }
+
+        var newTimer = window.setInterval(function() {
+          if (window.initNECaptcha) {
+            window.clearInterval(newTimer);
+            that.setState({
+              timer: null,
+              count: 0,
+            });
+            window.setTimeout(that.ready.bind(that));
+            return;
+          }
+
+          var c = that.state.count;
+          c -= 1;
+
+          if (c < 1) {
+            window.clearInterval(newTimer);
+            that.setState({
+              timer: null,
+              count: 0,
+            });
+          } else {
+            that.setState({
+              count: c,
+            });
+          }
+        }, 100);
+        that.setState({
+          timer: newTimer,
+          count: 10,
         });
       });
 
@@ -205,18 +248,25 @@ var NECaptcha =
       });
 
       _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), 'destroy', function() {
-        var that = _assertThisInitialized(_assertThisInitialized(_this)); // that.state.script.parentNode.removeChild(that.state.script);
+        var that = _assertThisInitialized(_assertThisInitialized(_this));
 
-        that.setState({
-          ins: null,
-          script: null,
-        });
+        var timer = that.state.timer;
+
+        if (timer) {
+          window.clearInterval(timer);
+        } // that.state.script.parentNode.removeChild(that.state.script);
+        // that.setState({
+        //   ins: null,
+        //   script: null,
+        // });
       });
 
       _this.dom = null;
       _this.state = {
         ins: null,
         script: null,
+        timer: null,
+        count: 0,
       };
       return _this;
     } // componentWillMount() {

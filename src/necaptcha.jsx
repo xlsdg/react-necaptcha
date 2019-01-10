@@ -50,13 +50,14 @@ export default class NECaptcha extends React.Component {
     // console.log('shouldComponentUpdate', that.props, nextProps, that.state, nextState);
     const { className, captchaId, mode, protocol, width, lang, appendTo } = that.props;
 
-    const isUpdate = (className !== nextProps.className) ||
-      (captchaId !== nextProps.captchaId) ||
-      (mode !== nextProps.mode) ||
-      (protocol !== nextProps.protocol) ||
-      (width !== nextProps.width) ||
-      (lang !== nextProps.lang) ||
-      (appendTo !== nextProps.appendTo);
+    const isUpdate =
+      className !== nextProps.className ||
+      captchaId !== nextProps.captchaId ||
+      mode !== nextProps.mode ||
+      protocol !== nextProps.protocol ||
+      width !== nextProps.width ||
+      lang !== nextProps.lang ||
+      appendTo !== nextProps.appendTo;
 
     return isUpdate;
   }
@@ -97,7 +98,7 @@ export default class NECaptcha extends React.Component {
       script.addEventListener('Im-ready', that.ready.bind(that), false);
       that.setState({
         elem: script,
-      })
+      });
       return;
     }
 

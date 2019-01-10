@@ -97,6 +97,8 @@
     return _assertThisInitialized(self);
   }
 
+  var SCRIPT_ID = 'react-necaptcha';
+
   var NECaptcha =
     /*#__PURE__*/
     (function(_React$Component) {
@@ -112,20 +114,23 @@
         _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), 'init', function() {
           var that = _assertThisInitialized(_assertThisInitialized(_this)); // console.log('_init');
 
-          var id = 'react-necaptcha';
-
           if (window.initNECaptcha) {
             that.ready();
             return;
           }
 
-          if (document.getElementById(id)) {
-            that.wait();
+          var elem = document.getElementById(SCRIPT_ID);
+
+          if (elem) {
+            elem.addEventListener('Im-ready', that.ready.bind(that), false);
+            that.setState({
+              elem: elem,
+            });
             return;
           }
 
           var ds = document.createElement('script');
-          ds.id = id;
+          ds.id = SCRIPT_ID;
           ds.type = 'text/javascript';
           ds.async = true;
           ds.charset = 'utf-8';
@@ -133,14 +138,16 @@
           if (ds.readyState) {
             ds.onreadystatechange = function() {
               if (ds.readyState === 'loaded' || ds.readyState === 'complete') {
-                ds.onreadystatechange = null;
-                that.ready();
+                ds.onreadystatechange = null; // that.ready();
+
+                that.triggerEvent('Im-ready');
               }
             };
           } else {
             ds.onload = function() {
-              ds.onload = null;
-              that.ready();
+              ds.onload = null; // that.ready();
+
+              that.triggerEvent('Im-ready');
             };
           }
 
@@ -153,50 +160,7 @@
           });
         });
 
-        _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), 'wait', function() {
-          var that = _assertThisInitialized(_assertThisInitialized(_this));
-
-          var _that$state = that.state,
-            timer = _that$state.timer,
-            count = _that$state.count;
-
-          if (timer || count > 0) {
-            return;
-          }
-
-          var newTimer = window.setInterval(function() {
-            if (window.initNECaptcha) {
-              window.clearInterval(newTimer);
-              that.setState({
-                timer: null,
-                count: 0,
-              });
-              window.setTimeout(that.ready.bind(that));
-              return;
-            }
-
-            var c = that.state.count;
-            c -= 1;
-
-            if (c < 1) {
-              window.clearInterval(newTimer);
-              that.setState({
-                timer: null,
-                count: 0,
-              });
-            } else {
-              that.setState({
-                count: c,
-              });
-            }
-          }, 100);
-          that.setState({
-            timer: newTimer,
-            count: 10,
-          });
-        });
-
-        _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), 'ready', function() {
+        _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), 'ready', function(event) {
           var that = _assertThisInitialized(_assertThisInitialized(_this)); // console.log('_ready');
 
           var _that$props = that.props,
@@ -208,7 +172,9 @@
             onClose = _that$props.onClose,
             onLoad = _that$props.onLoad,
             onError = _that$props.onError;
-          var ins = that.state.ins;
+          var _that$state = that.state,
+            ins = _that$state.ins,
+            elem = _that$state.elem;
 
           if (!window.initNECaptcha) {
             return;
@@ -254,28 +220,44 @@
             },
             onError
           );
+
+          if (elem) {
+            elem.removeEventListener('Im-ready', that.ready.bind(that), false);
+          }
         });
 
         _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), 'destroy', function() {
           var that = _assertThisInitialized(_assertThisInitialized(_this));
 
-          var timer = that.state.timer;
+          var elem = that.state.elem;
 
-          if (timer) {
-            window.clearInterval(timer);
-          } // that.state.script.parentNode.removeChild(that.state.script);
+          if (elem) {
+            elem.removeEventListener('Im-ready', that.ready.bind(that), false);
+          } // script.parentNode.removeChild(that.state.script);
           // that.setState({
           //   ins: null,
           //   script: null,
+          //   elem: null,
           // });
+        });
+
+        _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), 'triggerEvent', function(name) {
+          var elem = document.getElementById(SCRIPT_ID);
+
+          if (!elem) {
+            return;
+          }
+
+          var e = document.createEvent('Event');
+          e.initEvent(name, true, true);
+          elem.dispatchEvent(e);
         });
 
         _this.dom = null;
         _this.state = {
           ins: null,
           script: null,
-          timer: null,
-          count: 0,
+          elem: null,
         };
         return _this;
       } // componentWillMount() {

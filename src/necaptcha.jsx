@@ -1,5 +1,7 @@
 import React from 'react';
 
+const SCRIPT_ID = 'react-necaptcha';
+
 export default class NECaptcha extends React.Component {
   static defaultProps = {
     className: 'i-necaptcha',
@@ -23,8 +25,7 @@ export default class NECaptcha extends React.Component {
     this.state = {
       ins: null,
       script: null,
-      timer: null,
-      count: 0,
+      elem: null,
     };
   }
 
@@ -70,20 +71,23 @@ export default class NECaptcha extends React.Component {
   init = () => {
     const that = this;
     // console.log('_init');
-    const id = 'react-necaptcha';
 
     if (window.initNECaptcha) {
       that.ready();
       return;
     }
 
-    if (document.getElementById(id)) {
-      that.wait();
+    const elem = document.getElementById(SCRIPT_ID);
+    if (elem) {
+      elem.addEventListener('Im-ready', that.ready.bind(that), false);
+      that.setState({
+        elem,
+      })
       return;
     }
 
     const ds = document.createElement('script');
-    ds.id = id;
+    ds.id = SCRIPT_ID;
     ds.type = 'text/javascript';
     ds.async = true;
     ds.charset = 'utf-8';
@@ -92,13 +96,15 @@ export default class NECaptcha extends React.Component {
       ds.onreadystatechange = () => {
         if (ds.readyState === 'loaded' || ds.readyState === 'complete') {
           ds.onreadystatechange = null;
-          that.ready();
+          // that.ready();
+          that.triggerEvent('Im-ready');
         }
       };
     } else {
       ds.onload = () => {
         ds.onload = null;
-        that.ready();
+        // that.ready();
+        that.triggerEvent('Im-ready');
       };
     }
 
@@ -112,55 +118,11 @@ export default class NECaptcha extends React.Component {
     });
   };
 
-  wait = () => {
-    const that = this;
-    const { timer, count } = that.state;
-
-    if (timer || count > 0) {
-      return;
-    }
-
-    const newTimer = window.setInterval(() => {
-      if (window.initNECaptcha) {
-        window.clearInterval(newTimer);
-
-        that.setState({
-          timer: null,
-          count: 0,
-        });
-
-        window.setTimeout(that.ready.bind(that));
-        return;
-      }
-
-      let c = that.state.count;
-      c -= 1;
-
-      if (c < 1) {
-        window.clearInterval(newTimer);
-
-        that.setState({
-          timer: null,
-          count: 0,
-        });
-      } else {
-        that.setState({
-          count: c,
-        });
-      }
-    }, 100);
-
-    that.setState({
-      timer: newTimer,
-      count: 10,
-    });
-  };
-
-  ready = () => {
+  ready = event => {
     const that = this;
     // console.log('_ready');
     const { captchaId, width, lang, onReady, onVerify, onClose, onLoad, onError } = that.props;
-    const { ins } = that.state;
+    const { ins, elem } = that.state;
 
     if (!window.initNECaptcha) {
       return;
@@ -207,21 +169,38 @@ export default class NECaptcha extends React.Component {
       },
       onError
     );
+
+    if (elem) {
+      elem.removeEventListener('Im-ready', that.ready.bind(that), false);
+    }
   };
 
   destroy = () => {
     const that = this;
-    const { timer } = that.state;
+    const { elem } = that.state;
 
-    if (timer) {
-      window.clearInterval(timer);
+    if (elem) {
+      elem.removeEventListener('Im-ready', that.ready.bind(that), false);
     }
 
-    // that.state.script.parentNode.removeChild(that.state.script);
+    // script.parentNode.removeChild(that.state.script);
+
     // that.setState({
     //   ins: null,
     //   script: null,
+    //   elem: null,
     // });
+  };
+
+  triggerEvent = (name) => {
+    const elem = document.getElementById(SCRIPT_ID);
+    if (!elem) {
+      return;
+    }
+
+    const e = document.createEvent('Event');
+    e.initEvent(name, true, true);
+    elem.dispatchEvent(e);
   };
 
   render() {

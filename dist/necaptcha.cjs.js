@@ -109,19 +109,25 @@ var NECaptcha =
       _this = _possibleConstructorReturn(this, _getPrototypeOf(NECaptcha).call(this, props));
 
       _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), 'init', function() {
-        var that = _assertThisInitialized(_assertThisInitialized(_this)); // console.log('_init');
+        var that = _assertThisInitialized(_assertThisInitialized(_this)); // console.log('init');
+
+        var elem = that.state.elem;
 
         if (window.initNECaptcha) {
           that.ready();
           return;
         }
 
-        var elem = document.getElementById(SCRIPT_ID);
+        var script = document.getElementById(SCRIPT_ID);
 
-        if (elem) {
-          elem.addEventListener('Im-ready', that.ready.bind(that), false);
+        if (script) {
+          if (elem) {
+            return;
+          }
+
+          script.addEventListener('Im-ready', that.ready.bind(that), false);
           that.setState({
-            elem: elem,
+            elem: script,
           });
           return;
         }
@@ -135,15 +141,15 @@ var NECaptcha =
         if (ds.readyState) {
           ds.onreadystatechange = function() {
             if (ds.readyState === 'loaded' || ds.readyState === 'complete') {
-              ds.onreadystatechange = null; // that.ready();
-
+              ds.onreadystatechange = null;
+              that.ready();
               that.triggerEvent('Im-ready');
             }
           };
         } else {
           ds.onload = function() {
-            ds.onload = null; // that.ready();
-
+            ds.onload = null;
+            that.ready();
             that.triggerEvent('Im-ready');
           };
         }
@@ -158,7 +164,7 @@ var NECaptcha =
       });
 
       _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), 'ready', function(event) {
-        var that = _assertThisInitialized(_assertThisInitialized(_this)); // console.log('_ready');
+        var that = _assertThisInitialized(_assertThisInitialized(_this)); // console.log('ready');
 
         var _that$props = that.props,
           captchaId = _that$props.captchaId,
@@ -224,7 +230,7 @@ var NECaptcha =
       });
 
       _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), 'destroy', function() {
-        var that = _assertThisInitialized(_assertThisInitialized(_this));
+        var that = _assertThisInitialized(_assertThisInitialized(_this)); // console.log('destroy');
 
         var elem = that.state.elem;
 
@@ -239,15 +245,20 @@ var NECaptcha =
       });
 
       _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), 'triggerEvent', function(name) {
-        var elem = document.getElementById(SCRIPT_ID);
+        var that = _assertThisInitialized(_assertThisInitialized(_this)); // console.log('triggerEvent');
 
-        if (!elem) {
+        var _that$state2 = that.state,
+          elem = _that$state2.elem,
+          script = _that$state2.script;
+
+        if (!elem && !script) {
           return;
         }
 
         var e = document.createEvent('Event');
         e.initEvent(name, true, true);
-        elem.dispatchEvent(e);
+        var dom = elem || script;
+        dom.dispatchEvent(e);
       });
 
       _this.dom = null;
@@ -273,12 +284,30 @@ var NECaptcha =
         //   const that = this;
         //   console.log('componentWillReceiveProps', that.props, nextProps);
         // }
-        // shouldComponentUpdate(nextProps, nextState) {
-        //   const that = this;
-        //   // console.log('shouldComponentUpdate', that.props, nextProps, that.state, nextState);
-        //   return nextProps.captchaId !== that.props.captchaId;
-        // }
-        // componentWillUpdate(nextProps, nextState) {
+      },
+      {
+        key: 'shouldComponentUpdate',
+        value: function shouldComponentUpdate(nextProps, nextState) {
+          var that = this; // console.log('shouldComponentUpdate', that.props, nextProps, that.state, nextState);
+
+          var _that$props2 = that.props,
+            className = _that$props2.className,
+            captchaId = _that$props2.captchaId,
+            mode = _that$props2.mode,
+            protocol = _that$props2.protocol,
+            width = _that$props2.width,
+            lang = _that$props2.lang,
+            appendTo = _that$props2.appendTo;
+          var isUpdate =
+            className !== nextProps.className ||
+            captchaId !== nextProps.captchaId ||
+            mode !== nextProps.mode ||
+            protocol !== nextProps.protocol ||
+            width !== nextProps.width ||
+            lang !== nextProps.lang ||
+            appendTo !== nextProps.appendTo;
+          return isUpdate;
+        }, // componentWillUpdate(nextProps, nextState) {
         //   const that = this;
         //   console.log('componentWillUpdate', that.props, nextProps, that.state, nextState);
         // }

@@ -45,11 +45,21 @@ export default class NECaptcha extends React.Component {
   //   console.log('componentWillReceiveProps', that.props, nextProps);
   // }
 
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   const that = this;
-  //   // console.log('shouldComponentUpdate', that.props, nextProps, that.state, nextState);
-  //   return nextProps.captchaId !== that.props.captchaId;
-  // }
+  shouldComponentUpdate(nextProps, nextState) {
+    const that = this;
+    // console.log('shouldComponentUpdate', that.props, nextProps, that.state, nextState);
+    const { className, captchaId, mode, protocol, width, lang, appendTo } = that.props;
+
+    const isUpdate = (className !== nextProps.className) ||
+      (captchaId !== nextProps.captchaId) ||
+      (mode !== nextProps.mode) ||
+      (protocol !== nextProps.protocol) ||
+      (width !== nextProps.width) ||
+      (lang !== nextProps.lang) ||
+      (appendTo !== nextProps.appendTo);
+
+    return isUpdate;
+  }
 
   // componentWillUpdate(nextProps, nextState) {
   //   const that = this;
@@ -70,18 +80,23 @@ export default class NECaptcha extends React.Component {
 
   init = () => {
     const that = this;
-    // console.log('_init');
+    // console.log('init');
+    const { elem } = that.state;
 
     if (window.initNECaptcha) {
       that.ready();
       return;
     }
 
-    const elem = document.getElementById(SCRIPT_ID);
-    if (elem) {
-      elem.addEventListener('Im-ready', that.ready.bind(that), false);
+    const script = document.getElementById(SCRIPT_ID);
+    if (script) {
+      if (elem) {
+        return;
+      }
+
+      script.addEventListener('Im-ready', that.ready.bind(that), false);
       that.setState({
-        elem,
+        elem: script,
       })
       return;
     }
@@ -96,14 +111,14 @@ export default class NECaptcha extends React.Component {
       ds.onreadystatechange = () => {
         if (ds.readyState === 'loaded' || ds.readyState === 'complete') {
           ds.onreadystatechange = null;
-          // that.ready();
+          that.ready();
           that.triggerEvent('Im-ready');
         }
       };
     } else {
       ds.onload = () => {
         ds.onload = null;
-        // that.ready();
+        that.ready();
         that.triggerEvent('Im-ready');
       };
     }
@@ -120,7 +135,7 @@ export default class NECaptcha extends React.Component {
 
   ready = event => {
     const that = this;
-    // console.log('_ready');
+    // console.log('ready');
     const { captchaId, width, lang, onReady, onVerify, onClose, onLoad, onError } = that.props;
     const { ins, elem } = that.state;
 
@@ -177,6 +192,7 @@ export default class NECaptcha extends React.Component {
 
   destroy = () => {
     const that = this;
+    // console.log('destroy');
     const { elem } = that.state;
 
     if (elem) {
@@ -192,15 +208,20 @@ export default class NECaptcha extends React.Component {
     // });
   };
 
-  triggerEvent = (name) => {
-    const elem = document.getElementById(SCRIPT_ID);
-    if (!elem) {
+  triggerEvent = name => {
+    const that = this;
+    // console.log('triggerEvent');
+    const { elem, script } = that.state;
+
+    if (!elem && !script) {
       return;
     }
 
     const e = document.createEvent('Event');
     e.initEvent(name, true, true);
-    elem.dispatchEvent(e);
+
+    const dom = elem || script;
+    dom.dispatchEvent(e);
   };
 
   render() {

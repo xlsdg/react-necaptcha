@@ -2,7 +2,13 @@ import React from 'react';
 
 const SCRIPT_ID = 'react-necaptcha';
 
-export default class NECaptcha extends React.Component {
+const typeOf = type => object => Object.prototype.toString.call(object) === `[object ${type}]`;
+
+// const isString = typeOf('String');
+// const isObject = typeOf('Object');
+const isFunction = typeOf('Function');
+
+export default class NECaptcha extends React.PureComponent {
   static defaultProps = {
     className: 'i-necaptcha',
     // captchaId: '',
@@ -16,23 +22,20 @@ export default class NECaptcha extends React.Component {
     onVerify: () => {},
     onClose: () => {},
     onLoad: instance => {},
-    onError: err => {},
+    onError: () => {},
   };
 
-  constructor(props) {
-    super(props);
-    this.dom = null;
-    this.state = {
-      ins: null,
-      script: null,
-      elem: null,
-    };
-  }
+  constructor() {
+    super(...arguments);
 
-  // componentWillMount() {
-  //   const that = this;
-  //   console.log('componentWillMount', that.props, that.state);
-  // }
+    const that = this;
+
+    that.dom = React.createRef();
+    that.instance = null;
+    that.script = null;
+
+    // that.state = {};
+  }
 
   componentDidMount() {
     const that = this;
@@ -40,31 +43,21 @@ export default class NECaptcha extends React.Component {
     that.init();
   }
 
-  // componentWillReceiveProps(nextProps) {
+  // shouldComponentUpdate(nextProps, nextState) {
   //   const that = this;
-  //   console.log('componentWillReceiveProps', that.props, nextProps);
-  // }
+  //   // console.log('shouldComponentUpdate', that.props, nextProps, that.state, nextState);
+  //   const { className, captchaId, mode, protocol, width, lang, appendTo } = that.props;
 
-  shouldComponentUpdate(nextProps, nextState) {
-    const that = this;
-    // console.log('shouldComponentUpdate', that.props, nextProps, that.state, nextState);
-    const { className, captchaId, mode, protocol, width, lang, appendTo } = that.props;
+  //   const isUpdate =
+  //     className !== nextProps.className ||
+  //     captchaId !== nextProps.captchaId ||
+  //     mode !== nextProps.mode ||
+  //     protocol !== nextProps.protocol ||
+  //     width !== nextProps.width ||
+  //     lang !== nextProps.lang ||
+  //     appendTo !== nextProps.appendTo;
 
-    const isUpdate =
-      className !== nextProps.className ||
-      captchaId !== nextProps.captchaId ||
-      mode !== nextProps.mode ||
-      protocol !== nextProps.protocol ||
-      width !== nextProps.width ||
-      lang !== nextProps.lang ||
-      appendTo !== nextProps.appendTo;
-
-    return isUpdate;
-  }
-
-  // componentWillUpdate(nextProps, nextState) {
-  //   const that = this;
-  //   console.log('componentWillUpdate', that.props, nextProps, that.state, nextState);
+  //   return isUpdate;
   // }
 
   componentDidUpdate(prevProps, prevState) {
@@ -82,7 +75,7 @@ export default class NECaptcha extends React.Component {
   init = () => {
     const that = this;
     // console.log('init');
-    const { elem } = that.state;
+    // const {  } = that.state;
 
     if (window.initNECaptcha) {
       that.ready();
@@ -91,14 +84,12 @@ export default class NECaptcha extends React.Component {
 
     const script = document.getElementById(SCRIPT_ID);
     if (script) {
-      if (elem) {
+      if (that.script) {
         return;
       }
 
-      script.addEventListener('Im-ready', that.ready.bind(that), false);
-      that.setState({
-        elem: script,
-      });
+      script.addEventListener('Im-ready', that.ready, false);
+      that.script = script;
       return;
     }
 
@@ -128,33 +119,30 @@ export default class NECaptcha extends React.Component {
     ds.src = `${protocol}//cstaticdun.126.net/load.min.js?_t=${new Date().getTime()}`;
     const s = document.getElementsByTagName('script')[0];
     s.parentNode.insertBefore(ds, s);
-
-    that.setState({
-      script: ds,
-    });
+    that.script = ds;
   };
 
   ready = event => {
     const that = this;
     // console.log('ready');
     const { captchaId, width, lang, onReady, onVerify, onClose, onLoad, onError } = that.props;
-    const { ins, elem } = that.state;
+    // const {  } = that.state;
 
     if (!window.initNECaptcha) {
       return;
     }
 
-    if (ins) {
+    if (that.instance) {
       return;
     }
 
-    if (!that.dom) {
+    if (!that.dom || !that.dom.current) {
       return;
     }
 
     const config = {
       captchaId,
-      element: that.dom,
+      element: that.dom.current,
       width,
       lang,
       onReady,
@@ -162,81 +150,76 @@ export default class NECaptcha extends React.Component {
       onClose,
     };
 
-    if (that.props.mode) {
+    if (typeof that.props.mode !== 'undefined') {
       config.mode = that.props.mode;
     }
 
-    if (that.props.protocol) {
+    if (typeof that.props.protocol !== 'undefined') {
       config.protocol = that.props.protocol;
     }
 
-    if (that.props.appendTo) {
+    if (typeof that.props.appendTo !== 'undefined') {
       config.appendTo = that.props.appendTo;
     }
 
     window.initNECaptcha(
       config,
       instance => {
-        that.setState({
-          ins: instance,
-        });
+        that.instance = instance;
 
-        onLoad && onLoad(instance);
+        if (isFunction(onLoad)) {
+          onLoad(instance);
+        }
       },
       onError
     );
 
-    if (elem) {
-      elem.removeEventListener('Im-ready', that.ready.bind(that), false);
+    if (that.script && isFunction(that.script.removeEventListener)) {
+      that.script.removeEventListener('Im-ready', that.ready, false);
     }
   };
 
   destroy = () => {
     const that = this;
     // console.log('destroy');
-    const { elem } = that.state;
+    // const {  } = that.state;
 
-    if (elem) {
-      elem.removeEventListener('Im-ready', that.ready.bind(that), false);
+    if (that.script && isFunction(that.script.removeEventListener)) {
+      that.script.removeEventListener('Im-ready', that.ready, false);
+      // that.script.parentNode.removeChild(that.script);
     }
 
-    // script.parentNode.removeChild(that.state.script);
+    if (that.instance && isFunction(that.instance.destroy)) {
+      that.instance.destroy();
+    }
 
-    // that.setState({
-    //   ins: null,
-    //   script: null,
-    //   elem: null,
-    // });
+    that.instance = null;
+    that.script = null;
   };
 
   triggerEvent = name => {
     const that = this;
     // console.log('triggerEvent');
-    const { elem, script } = that.state;
+    // const {  } = that.state;
 
-    if (!elem && !script) {
+    if (!that.script || !isFunction(that.script.dispatchEvent)) {
       return;
     }
 
     const e = document.createEvent('Event');
     e.initEvent(name, true, true);
-
-    const dom = elem || script;
-    dom.dispatchEvent(e);
+    that.script.dispatchEvent(e);
   };
 
   render() {
     const that = this;
     // console.log('render');
-    const { className } = that.props;
+    const { className, children } = that.props;
 
     return (
-      <div
-        className={className}
-        ref={e => {
-          that.dom = e;
-        }}
-      />
+      <div ref={that.dom} className={className}>
+        {children}
+      </div>
     );
   }
 }

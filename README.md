@@ -1,6 +1,6 @@
 # react-necaptcha
 
-A NECaptcha component for React
+> A NECaptcha component for React
 
 ## Installation
 

@@ -218,7 +218,7 @@ export default class NECaptcha extends React.PureComponent {
 
     return (
       <div ref={that.dom} className={className}>
-        {children}
+        {children || null}
       </div>
     );
   }

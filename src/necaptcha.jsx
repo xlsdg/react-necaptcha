@@ -40,6 +40,8 @@ export default class NECaptcha extends React.PureComponent {
   componentDidMount() {
     const that = this;
     // console.log('componentDidMount', that.props, that.state);
+    // const {  } = that.props;
+    // const {  } = that.state;
     that.create();
   }
 
@@ -63,23 +65,27 @@ export default class NECaptcha extends React.PureComponent {
   componentDidUpdate(prevProps, prevState) {
     const that = this;
     // console.log('componentDidUpdate', prevProps, that.props, prevState, that.state);
+    // const {  } = that.props;
+    // const {  } = that.state;
     that.create();
   }
 
   componentWillUnmount() {
     const that = this;
     // console.log('componentWillUnmount', that.props, that.state);
+    // const {  } = that.props;
+    // const {  } = that.state;
     that.destroy();
   }
 
   create = () => {
     const that = this;
     // console.log('create');
+    // const {  } = that.props;
     // const {  } = that.state;
 
     if (window.initNECaptcha) {
-      that.ready();
-      return;
+      return that.ready();
     }
 
     const script = document.getElementById(SCRIPT_ID);
@@ -103,22 +109,23 @@ export default class NECaptcha extends React.PureComponent {
       ds.onreadystatechange = () => {
         if (ds.readyState === 'loaded' || ds.readyState === 'complete') {
           ds.onreadystatechange = null;
-          that.ready();
           that.triggerEvent('Im-ready');
         }
       };
     } else {
       ds.onload = () => {
         ds.onload = null;
-        that.ready();
         that.triggerEvent('Im-ready');
       };
     }
 
     const protocol = window.location.protocol === 'http:' ? 'http:' : 'https:';
     ds.src = `${protocol}//cstaticdun.126.net/load.min.js?_t=${new Date().getTime()}`;
+
     const s = document.getElementsByTagName('script')[0];
     s.parentNode.insertBefore(ds, s);
+
+    ds.addEventListener('Im-ready', that.ready, false);
     that.script = ds;
   };
 
@@ -173,33 +180,30 @@ export default class NECaptcha extends React.PureComponent {
       },
       onError
     );
-
-    if (that.script && isFunction(that.script.removeEventListener)) {
-      that.script.removeEventListener('Im-ready', that.ready, false);
-    }
   };
 
   destroy = () => {
     const that = this;
     // console.log('destroy');
+    // const {  } = that.props;
     // const {  } = that.state;
 
     if (that.script && isFunction(that.script.removeEventListener)) {
       that.script.removeEventListener('Im-ready', that.ready, false);
       // that.script.parentNode.removeChild(that.script);
+      that.script = null;
     }
 
     if (that.instance && isFunction(that.instance.destroy)) {
       that.instance.destroy();
+      that.instance = null;
     }
-
-    that.instance = null;
-    that.script = null;
   };
 
   triggerEvent = name => {
     const that = this;
     // console.log('triggerEvent');
+    // const {  } = that.props;
     // const {  } = that.state;
 
     if (!that.script || !isFunction(that.script.dispatchEvent)) {
@@ -215,6 +219,7 @@ export default class NECaptcha extends React.PureComponent {
     const that = this;
     // console.log('render');
     const { className, children } = that.props;
+    // const {  } = that.state;
 
     return (
       <div ref={that.dom} className={className}>

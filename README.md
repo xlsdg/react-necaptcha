@@ -42,7 +42,7 @@ export default () => {
   onClose:      PropTypes.func,
 ```
 
-[Read More](http://support.dun.163.com/documents/15588062143475712?docId=150442915877015552)
+[Read More](https://support.dun.163.com/documents/15588062143475712?docId=150442915877015552)
 
 # License
 
